@@ -13,18 +13,30 @@ const GET_MOVIE = gql`
       rating
       language
     }
+    suggestions(id: $id) {
+      id
+      medium_cover_image
+    }
   }
 `;
 
 const Container = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 150vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 18%;
+  align-items: center;
+  background: linear-gradient(-45deg, #fab1a0, #fd79a8);
+`;
+
+const MovieContainer = styled.div`
+  width: 100%;
+  height: 70%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 18%;
   align-items: center;
-  background: linear-gradient(-45deg, #fab1a0, #fd79a8);
 `;
 
 const TextContainer = styled.div`
@@ -57,6 +69,23 @@ const PhotoContainer = styled.div`
   height: 500px;
 `;
 
+const SuggestionContainer = styled.div`
+  width: 100%;
+  height: 25%;
+  margin-top: 25px;
+  display: grid;
+  grid-auto-rows: 100px;
+  grid-gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
+`;
+
+const SuggestionPoster = styled.div`
+  background-image: url(${(props) => props.bg});
+  background-position: center center;
+  background-size: cover;
+  height: 300px;
+`;
+
 export default () => {
   const { id } = useParams();
   const { loading, data } = useQuery(GET_MOVIE, {
@@ -64,25 +93,24 @@ export default () => {
   });
 
   return (
-    <>
-      {loading && (
-        <Container>
-          <Title>LOADING...</Title>
-        </Container>
-      )}
-      {!loading && data.movie && (
-        <Container>
-          <TextContainer>
-            <Title>{data.movie.title}</Title>
-            <Info>
-              {data.movie.language} • {data.movie.rating}
-            </Info>
-            <Desc>{data.movie.description_intro}</Desc>
-          </TextContainer>
+    <Container>
+      <MovieContainer>
+        <TextContainer>
+          <Title>{loading ? "Loading..." : data.movie.title}</Title>
+          <Info>
+            {data?.movie?.language} • {data?.movie?.rating}
+          </Info>
+          <Desc>{data?.movie?.description_intro}</Desc>
+        </TextContainer>
 
-          <PhotoContainer bg={data.movie.medium_cover_image} />
-        </Container>
-      )}
-    </>
+        <PhotoContainer bg={data?.movie?.medium_cover_image} />
+      </MovieContainer>
+
+      <SuggestionContainer>
+        {data?.suggestions.map((s) => (
+          <SuggestionPoster key={s.id} bg={s.medium_cover_image} />
+        ))}
+      </SuggestionContainer>
+    </Container>
   );
 };
