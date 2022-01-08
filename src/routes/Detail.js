@@ -7,11 +7,13 @@ import styled from "styled-components";
 const GET_MOVIE = gql`
   query getMovie($id: Int!) {
     movie(id: $id) {
+      id
       title
       medium_cover_image
       description_intro
       rating
       language
+      isLiked @client
     }
     suggestions(id: $id) {
       id
@@ -91,12 +93,16 @@ export default () => {
   const { loading, data } = useQuery(GET_MOVIE, {
     variables: { id },
   });
+  console.log(data);
 
   return (
     <Container>
       <MovieContainer>
         <TextContainer>
-          <Title>{loading ? "Loading..." : data.movie.title}</Title>
+          <Title>
+            {loading ? "Loading..." : data.movie.title}{" "}
+            {data?.movie.isLiked ? "💖" : "😰"}
+          </Title>
           <Info>
             {data?.movie?.language} • {data?.movie?.rating}
           </Info>

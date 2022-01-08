@@ -68,10 +68,12 @@ const Home = () => {
       <MovieContainer>
         {loading && <Loading>Loading...</Loading>}
         {data?.movies.map((movie) => (
-          <>
-            <Movie key={movie.id} id={movie.id} bg={movie.medium_cover_image} />
-            <button>{movie.isLiked ? "Unlike" : "Like"}</button>
-          </>
+          <Movie
+            key={movie.id}
+            id={movie.id}
+            isLiked={movie.isLiked}
+            bg={movie.medium_cover_image}
+          />
         ))}
       </MovieContainer>
     </Container>
